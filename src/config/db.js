@@ -1,23 +1,28 @@
 import { MongoClient } from "mongodb";
-const uri = process.env.MONGO_URL;
-const client = new MongoClient(uri);
 
+const uri = process.env.MONGO_URL;
+let client;
 let db;
 
 async function connectDB() {
+    if (db) return;
+
     try {
-        await client.connect();
+        if (!client) {
+            client = new MongoClient(uri);
+            await client.connect();
+        }
         db = client.db("TestPH");
-        //console.log("✌️ Connected to MongoDB");
+        console.log("✅ Connected to MongoDB");
     } catch (error) {
-        //console.error("❌ Error connecting to MongoDB", error);
-        process.exit(1);
+        console.error("❌ MongoDB connection error:", error);
+        throw error;
     }
 }
 
-async function getDB() {
+function getDB() {
     if (!db) {
-        throw new Error("❌ First connect to the database");
+        throw new Error("❌ Must call connectDB() before getDB()");
     }
     return db;
 }
