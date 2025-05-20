@@ -6,7 +6,11 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const app = express();
 await connectDB();
 
-app.use(cors());
+app.use(
+    cors({
+        origin: "https://hobby-hub.web.app",
+    })
+);
 app.use(express.json());
 
 app.use("/api/", hobbyRoute);
